@@ -5,8 +5,8 @@
 #   faire les migrations sans interactions
 #   faire un cache:clear
 # build les assets  docker run --rm -v ./:/var/www/html -w /var/www/html node:22 sh -c "yarn install && yarn build"
-# changer les droits chown -R www-data:www-data var et public
-# relancer les container docker compose up -d
+# changer les droits chown -R www-data:www-data var et public/build
+# relancer les containers docker compose -f compose.prod.yaml up -d
 
 # et appeler ce scritp
 
