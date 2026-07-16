@@ -53,6 +53,47 @@ USER ${USER_ID}:${GROUP_ID}
 
 FROM php-base as php-prod
 
+#####
+# ASSET BUILDER
+#####
+FROM node:22 as node-build
+WORKDIR /var/www/html
+
+COPY . .
+
+USER root
+RUN yarn
+RUN yarn build
+
+#####
+# PROD STAGE REGISTRY
+#####
+
+FROM php-base as php-prod-registry
+WORKDIR /var/www/html
+
+ENV APP_ENV=prod
+
+COPY . .
+
+COPY --from=node-build /var/www/html/public/build ./public/build
+
+RUN composer install
+RUN chown -R www-data:www-data var public
+
+USER www-data
+
+#####
+# NGINX STAGE PROD REGISTRY
+#####
+FROM nginx:latest as nginx_registry
+WORKDIR /var/www/html/public
+
+COPY --from=php-prod-registry /var/www/html/public ./
+
+COPY ./nginx.prod.registry.conf /etc/nginx/conf.d/default.conf
+
+
 ######
 # DEV STAGE NODE
 ######
