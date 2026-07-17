@@ -83,6 +83,8 @@ RUN chown -R www-data:www-data var public
 
 USER www-data
 
+CMD rm -rf /var/www/html/var/cache/* && php bin/console doctrine:migrations:migrate --no-interaction && php bin/console cache:clear && php-fpm
+
 #####
 # NGINX STAGE PROD REGISTRY
 #####
